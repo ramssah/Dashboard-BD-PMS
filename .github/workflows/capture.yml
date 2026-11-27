@@ -15,12 +15,17 @@ concurrency:
 jobs:
   capture:
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 30
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
           node-version: 20
+      - name: Install browser (needed for the UN and ADB pages)
+        continue-on-error: true
+        run: |
+          npm install --no-save --no-audit --no-fund playwright@1.49.1
+          npx playwright install --with-deps chromium
       - name: Run capture
         run: node run.mjs
       - name: Save the updated feed
@@ -29,4 +34,5 @@ jobs:
           git config user.email "tender-radar@users.noreply.github.com"
           git add feed.json
           git diff --cached --quiet || git commit -m "Update tender feed"
+          git pull --rebase
           git push
