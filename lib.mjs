@@ -9,7 +9,7 @@ export const KEYWORDS = [
   'logistics','port','airport','bridge','traffic','parking','housing','smart city','municipal','solid waste','waste management',
   'engineering','architect','design consultant','project management','supervision','feasibility','detailed project report','dpr',
   'transaction advis','ppp','public private','public-private','financial advis','infrastructure finance','land use','development planning',
-  'technical assistance','capacity building','institutional development','environment','climate'];
+  'technical assistance','consultan','capacity building','institutional development','environment','climate'];
 export const NEGATIVE = ['hotel','catering','printing','stationery','vehicle hire','laptop','furniture','uniform','airline ticket','venue','cleaning services','security guard'];
 
 export function relevance(text) {
@@ -47,13 +47,34 @@ export function region(country) {
   return 'Other';
 }
 
+const MON = { jan: 1, feb: 2, mar: 3, apr: 4, may: 5, jun: 6, jul: 7, aug: 8, sep: 9, oct: 10, nov: 11, dec: 12 };
+const pad = n => String(n).padStart(2, '0');
 export function isoDate(v) {
   if (!v) return '';
   const s = String(v).trim();
-  if (/^\d{4}-\d{2}-\d{2}/.test(s)) return s.slice(0, 10);
+  let m;
+  if ((m = /^(\d{4})-(\d{2})-(\d{2})/.exec(s))) return m[0];
+  if ((m = /(\d{1,2})[-\/ .]([A-Za-z]{3})[a-z]*[-\/ ,.]+(\d{4})/.exec(s)) && MON[m[2].toLowerCase()]) return `${m[3]}-${pad(MON[m[2].toLowerCase()])}-${pad(m[1])}`;
+  if ((m = /^(\d{1,2})[\/.-](\d{1,2})[\/.-](\d{4})/.exec(s))) return `${m[3]}-${pad(m[2])}-${pad(m[1])}`; // day first
+  if ((m = /^(?:closes?\s+)?(\d{1,2})\s+([A-Za-z]{3})[a-z]*$/i.exec(s)) && MON[m[2].toLowerCase()]) { // "9 Nov" with no year
+    const now = new Date(); let y = now.getUTCFullYear();
+    if (new Date(Date.UTC(y, MON[m[2].toLowerCase()] - 1, +m[1])) < now - 60 * 864e5) y++;
+    return `${y}-${pad(MON[m[2].toLowerCase()])}-${pad(m[1])}`;
+  }
   const d = new Date(s);
   return isNaN(d) ? '' : d.toISOString().slice(0, 10);
 }
+/** First date found inside free text, or ''. */
+export function findDate(text) {
+  const m = /(\d{4}-\d{2}-\d{2})|(\d{1,2}[-\/ ][A-Za-z]{3,9}[-\/ ,]+\d{4})|(\d{1,2}[\/.]\d{1,2}[\/.]\d{4})/.exec(String(text || ''));
+  return m ? isoDate(m[0]) : '';
+}
+const ENT = { amp: '&', lt: '<', gt: '>', quot: '"', apos: "'", nbsp: ' ', ndash: '-', mdash: '-' };
+export const decodeEntities = s => String(s || '').replace(/&(#x?[0-9a-f]+|[a-z]+);/gi, (m, e) => {
+  if (e[0] === '#') { const n = e[1].toLowerCase() === 'x' ? parseInt(e.slice(2), 16) : parseInt(e.slice(1), 10); return n ? String.fromCodePoint(n) : m; }
+  return ENT[e.toLowerCase()] ?? m;
+});
+export const stripTags = h => decodeEntities(String(h || '').replace(/<(script|style)[\s\S]*?<\/\1>/gi, ' ').replace(/<[^>]+>/g, ' ')).replace(/\s+/g, ' ').trim();
 export function parseBudget(v, cur) {
   if (typeof v === 'number') return { value: v, cur: cur || 'INR' };
   const m = /([A-Z]{3})?\s*([\d][\d,\.]*)/.exec(String(v || ''));
@@ -90,8 +111,8 @@ export function toItem(raw, source) {
   return {
     key: keyOf(title, client), title, client, country,
     region: region(country), sector: sector(title + ' ' + (raw.scope || '')),
-    source, url: raw.url || '', value: b.value, cur: b.cur,
+    source: raw.source || source, url: raw.url || '', value: b.value, cur: b.cur,
     deadline: isoDate(raw.deadline), published: isoDate(raw.published),
-    rel: relevance(title + ' ' + (raw.scope || '')), type: raw.type || '', ref: raw.ref || ''
+    rel: relevance(title + ' ' + (raw.scope || '')), type: raw.type || '', ref: raw.ref || '', ...(raw.listUrl ? { lu: 1 } : {})
   };
 }

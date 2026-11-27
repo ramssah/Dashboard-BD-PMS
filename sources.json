@@ -1,37 +1,344 @@
 {
-  "sources": [
+ "sources": [
+  {
+   "name": "World Bank",
+   "type": "worldbank",
+   "rows": 200,
+   "minRelevance": "MEDIUM",
+   "maxNew": 150,
+   "note": "Public procurement notices API."
+  },
+  {
+   "name": "Kenya - PPIP",
+   "type": "ocds",
+   "url": "https://tenders.go.ke/api/ocds/tenders?fy={fy}",
+   "country": "Kenya",
+   "cur": "KES",
+   "linkBase": "https://tenders.go.ke/",
+   "minRelevance": "HIGH",
+   "maxNew": 60,
+   "note": "Open Contracting feed. Only tenders that clearly match IQT work (two or more keywords) are kept. {fy} fills in the current financial year automatically."
+  },
+  {
+   "name": "African Development Bank",
+   "type": "htmllinks",
+   "url": "https://www.afdb.org/en/documents/project-related-procurement/procurement-notices/invitation-for-bids?page={page}",
+   "pages": 4,
+   "pageStart": 0,
+   "linkPattern": "/en/documents/(eoi|ifb|aoi|ami|rfp|rfq|spn|gpn|reoi|rfe|pq|notice)[-a-z0-9]",
+   "exclude": "frequently asked",
+   "titleFormat": "type-country-title",
+   "client": "African Development Bank",
+   "minRelevance": "MEDIUM",
+   "maxNew": 80,
+   "note": "Invitations for bids and expressions of interest. Deadlines are not on the list page, so they stay blank until you verify."
+  },
+  {
+   "name": "Asian Development Bank",
+   "type": "browser",
+   "url": "https://selfservice.adb.org/OA_HTML/OA.jsp?OAFunc=XXCRS_CSRN_HOME_PAGE",
+   "linkPattern": "adb\\.org/projects/\\d+-\\d+",
+   "minTitle": 15,
+   "client": "Asian Development Bank",
+   "minRelevance": "MEDIUM",
+   "maxNew": 60,
+   "timeoutMs": 80000,
+   "note": "Consulting notices. Needs the browser step in the schedule file."
+  },
+  {
+   "name": "UNGM",
+   "type": "browser",
+   "url": "https://www.ungm.org/Public/Notice",
+   "waitFor": "a[href*='/Public/Notice/']",
+   "rowSelector": "div[data-noticeid], .tableRow",
+   "linkPattern": "/Public/Notice/\\d+",
+   "exclude": "open in a new window",
+   "minTitle": 15,
+   "client": "United Nations",
+   "minRelevance": "MEDIUM",
+   "maxNew": 60,
+   "timeoutMs": 80000,
+   "note": "UN notices. Shows the first page only. Needs the browser step in the schedule file."
+  },
+  {
+   "name": "AIIB",
+   "type": "htmllinks",
+   "url": "https://www.aiib.org/en/opportunities/business/project-procurement/list.html",
+   "linkPattern": "/en/opportunities/business/project-procurement/.+\\.html",
+   "exclude": "list\\.html|index\\.html|strateg|advisory-panel",
+   "client": "AIIB",
+   "minRelevance": "MEDIUM",
+   "maxNew": 40,
+   "note": "Project procurement notices."
+  },
+  {
+   "name": "AFD dgMarket",
+   "type": "htmllinks",
+   "url": "https://afd.dgmarket.com/tenders/brandedNoticeList.do",
+   "linkPattern": "viewNotice\\.do",
+   "client": "AFD",
+   "minRelevance": "MEDIUM",
+   "maxNew": 40,
+   "note": "AFD notices on dgMarket."
+  },
+  {
+   "name": "PublicProcurement.org",
+   "type": "htmllinks",
+   "url": "https://publicprocurement.org/tenders/page/{page}/",
+   "pages": 3,
+   "pageStart": 1,
+   "linkPattern": "^https://publicprocurement\\.org/[a-z0-9-]{30,}/?$",
+   "exclude": "cookie|privacy|terms",
+   "minRelevance": "MEDIUM",
+   "maxNew": 60,
+   "note": "Aggregator. Check the site's terms of use before relying on it."
+  },
+  {
+   "name": "MangoFetch",
+   "type": "htmllinks",
+   "url": "https://www.mangofetch.com/tenders",
+   "linkPattern": "/tenders/[0-9a-f]{8}-[0-9a-f]{4}-",
+   "titleFormat": "mango",
+   "minRelevance": "MEDIUM",
+   "maxNew": 60,
+   "note": "Aggregator. Check the site's terms of use before relying on it."
+  },
+  {
+   "name": "InfraLens",
+   "type": "htmllinks",
+   "url": "https://tenders.infralens.in/live",
+   "linkPattern": "/tender/[a-z0-9-]{10,}",
+   "titleFormat": "infralens",
+   "country": "India",
+   "minRelevance": "HIGH",
+   "maxNew": 60,
+   "note": "Aggregator of Indian tenders. Check the site's terms of use before relying on it."
+  },
+  {
+   "name": "Gambia Tenders.GM",
+   "type": "htmllinks",
+   "url": "https://www.tenders.gm/tenders",
+   "linkPattern": "/tenders/[a-z0-9]{20,}",
+   "country": "Gambia",
+   "minRelevance": "MEDIUM",
+   "maxNew": 40,
+   "note": "Gambia tenders list."
+  },
+  {
+   "name": "Uganda e-GP",
+   "type": "htmltable",
+   "url": "https://egpuganda.go.ug/bid-notices",
+   "cols": {
+    "ref": 0,
+    "client": 1,
+    "type": 2,
+    "title": 3,
+    "published": 4,
+    "deadline": 5
+   },
+   "minCells": 6,
+   "country": "Uganda",
+   "minRelevance": "MEDIUM",
+   "maxNew": 40,
+   "note": "Bid notices table."
+  },
+  {
+   "name": "Malawi PPDA",
+   "type": "htmltable",
+   "url": "https://www.ppda.mw/tenders",
+   "cols": {
+    "title": 0,
+    "client": 1,
+    "ref": 2,
+    "published": 3,
+    "deadline": 4
+   },
+   "minCells": 4,
+   "country": "Malawi",
+   "minRelevance": "MEDIUM",
+   "maxNew": 40,
+   "note": "Open tenders table."
+  },
+  {
+   "name": "India e-procurement portals",
+   "type": "gepnic",
+   "portals": [
     {
-      "name": "World Bank",
-      "type": "worldbank",
-      "rows": 200,
-      "note": "Public procurement notices API.",
-      "minRelevance": "MEDIUM"
+     "name": "Himachal Pradesh e-procurement",
+     "url": "https://hptenders.gov.in/nicgep/app"
     },
     {
-      "name": "Kenya - PPIP",
-      "type": "ocds",
-      "url": "https://tenders.go.ke/api/ocds/tenders?fy={fy}",
-      "country": "Kenya",
-      "cur": "KES",
-      "linkBase": "https://tenders.go.ke/",
-      "note": "Open Contracting feed. Only tenders that clearly match IQT work (two or more keywords) are kept. {fy} fills in the current financial year automatically.",
-      "minRelevance": "HIGH"
+     "name": "Daman & Diu e-procurement",
+     "url": "https://ddtenders.gov.in/nicgep/app"
     },
     {
-      "name": "Added CSV files",
-      "type": "csv",
-      "dir": ".",
-      "pattern": "^add-.*\\.csv$",
-      "note": "Upload a CSV named add-something.csv (for example add-tenders.csv) to the repository."
+     "name": "Goa e-procurement",
+     "url": "https://eprocure.goa.gov.in/nicgep/app"
     },
     {
-      "name": "Example RSS (turn on and edit)",
-      "type": "rss",
-      "url": "https://example.org/tenders.rss",
-      "client": "Example agency",
-      "country": "",
-      "enabled": false,
-      "note": "Use for any portal that offers an RSS or Atom feed."
+     "name": "Jammu & Kashmir e-procurement",
+     "url": "https://jktenders.gov.in/nicgep/app"
+    },
+    {
+     "name": "Jharkhand e-procurement",
+     "url": "https://jharkhandtenders.gov.in/nicgep/app"
+    },
+    {
+     "name": "Kerala e-procurement",
+     "url": "https://etenders.kerala.gov.in/nicgep/app"
+    },
+    {
+     "name": "Haryana e-procurement",
+     "url": "https://etenders.hry.nic.in/nicgep/app"
+    },
+    {
+     "name": "CPPP etenders.gov.in",
+     "url": "https://etenders.gov.in/eprocure/app"
+    },
+    {
+     "name": "Defence e-procurement",
+     "url": "https://defproc.gov.in/nicgep/app"
+    },
+    {
+     "name": "NRRDA / PMGSY e-procurement",
+     "url": "https://pmgsytenders.gov.in/nicgep/app"
+    },
+    {
+     "name": "Andaman & Nicobar e-procurement",
+     "url": "https://eprocure.andamannicobar.gov.in/nicgep/app"
+    },
+    {
+     "name": "Arunachal Pradesh e-procurement",
+     "url": "https://arunachaltenders.gov.in/nicgep/app"
+    },
+    {
+     "name": "Assam e-procurement",
+     "url": "https://assamtenders.gov.in/nicgep/app"
+    },
+    {
+     "name": "Chandigarh e-procurement",
+     "url": "https://etenders.chd.nic.in/nicgep/app"
+    },
+    {
+     "name": "Dadra & Nagar Haveli e-procurement",
+     "url": "https://dnhtenders.gov.in/nicgep/app"
+    },
+    {
+     "name": "Lakshadweep e-procurement",
+     "url": "https://tendersutl.gov.in/nicgep/app"
+    },
+    {
+     "name": "Maharashtra e-procurement",
+     "url": "https://mahatenders.gov.in/nicgep/app"
+    },
+    {
+     "name": "Madhya Pradesh e-procurement",
+     "url": "https://mptenders.gov.in/nicgep/app"
+    },
+    {
+     "name": "Manipur e-procurement",
+     "url": "https://manipurtenders.gov.in/nicgep/app"
+    },
+    {
+     "name": "Meghalaya e-procurement",
+     "url": "https://meghalayatenders.gov.in/nicgep/app"
+    },
+    {
+     "name": "Mizoram e-procurement",
+     "url": "https://mizoramtenders.gov.in/nicgep/app"
+    },
+    {
+     "name": "Nagaland e-procurement",
+     "url": "https://nagalandtenders.gov.in/nicgep/app"
+    },
+    {
+     "name": "Odisha e-procurement",
+     "url": "https://tendersodisha.gov.in/nicgep/app"
+    },
+    {
+     "name": "Puducherry e-procurement",
+     "url": "https://pudutenders.gov.in/nicgep/app"
+    },
+    {
+     "name": "Punjab e-procurement",
+     "url": "https://eproc.punjab.gov.in/nicgep/app"
+    },
+    {
+     "name": "Rajasthan e-procurement",
+     "url": "https://eproc.rajasthan.gov.in/nicgep/app"
+    },
+    {
+     "name": "Sikkim e-procurement",
+     "url": "https://sikkimtender.gov.in/nicgep/app"
+    },
+    {
+     "name": "Tamil Nadu e-procurement",
+     "url": "https://tntenders.gov.in/nicgep/app"
+    },
+    {
+     "name": "Tripura e-procurement",
+     "url": "https://tripuratenders.gov.in/nicgep/app"
+    },
+    {
+     "name": "Ladakh e-procurement",
+     "url": "https://tenders.ladakh.gov.in/nicgep/app"
+    },
+    {
+     "name": "Uttarakhand e-procurement",
+     "url": "https://uktenders.gov.in/nicgep/app"
+    },
+    {
+     "name": "West Bengal e-procurement",
+     "url": "https://wbtenders.gov.in/nicgep/app"
+    },
+    {
+     "name": "CPPP eprocure.gov.in",
+     "url": "https://eprocure.gov.in/eprocure/app"
+    },
+    {
+     "name": "Delhi e-procurement",
+     "url": "https://www.govtprocurement.delhi.gov.in/nicgep/app"
+    },
+    {
+     "name": "Uttar Pradesh e-procurement",
+     "url": "https://etender.up.nic.in/nicgep/app"
     }
-  ]
+   ],
+   "minRelevance": "HIGH",
+   "maxNew": 120,
+   "note": "Central and state government e-procurement portals (latest active tenders). Shows the first page of each portal."
+  },
+  {
+   "name": "Added CSV files",
+   "type": "csv",
+   "dir": ".",
+   "pattern": "^add-.*\\.csv$",
+   "note": "Upload a CSV named add-something.csv (for example add-tenders.csv) to the repository. Use it for TendersInfo, DevelopmentAid and other login sites."
+  },
+  {
+   "name": "JICA",
+   "type": "htmllinks",
+   "url": "https://www.jica.go.jp/english/",
+   "linkPattern": "/english/",
+   "enabled": false,
+   "note": "Switched off: the JICA tender notices page address is not known yet. Send the address of its notices page."
+  },
+  {
+   "name": "AFD",
+   "type": "htmllinks",
+   "url": "https://www.afd.fr/en/bid-invitations-and-procurement",
+   "linkPattern": "/en/",
+   "enabled": false,
+   "note": "Switched off: the AFD tender list address is not known yet. Send the address of its notices page."
+  },
+  {
+   "name": "Example RSS (turn on and edit)",
+   "type": "rss",
+   "url": "https://example.org/tenders.rss",
+   "client": "Example agency",
+   "country": "",
+   "enabled": false,
+   "note": "Use for any portal that offers an RSS or Atom feed."
+  }
+ ]
 }
