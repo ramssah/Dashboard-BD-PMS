@@ -151,7 +151,7 @@ function load(){
 let saveT=null;
 let SERVER=false;
 function pushServer(){fetch('api/db',{method:'PUT',headers:{'content-type':'application/json'},body:JSON.stringify(DB)}).catch(()=>{})}
-function save(){clearTimeout(saveT);saveT=setTimeout(()=>{try{localStorage.setItem(KEY,JSON.stringify(DB))}catch(e){}if(SERVER)pushServer()},150)}
+function save(){clearTimeout(saveT);saveT=setTimeout(()=>{try{localStorage.setItem(KEY,JSON.stringify(DB))}catch(e){if(!window._qw){window._qw=1;toast('Browser storage is full. Export a backup now.')}}if(SERVER)pushServer()},150)}
 function toast(m){const t=document.createElement('div');t.className='toast';t.textContent=m;document.body.appendChild(t);setTimeout(()=>t.remove(),2200)}
 function inr(v,cur){return (Number(v)||0)*(DB.fx[cur||'INR']||1)}
 function cr(v){const n=v/1e7;return '₹ '+(n>=100?n.toFixed(0):n.toFixed(2))+' Cr'}
